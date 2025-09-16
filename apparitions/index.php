@@ -21,7 +21,7 @@ include __DIR__ . '/../includes/header.php';
 
   if ($event) {
     ?>
-    <h1><?= $event['name'] ?></h1>
+    <h2 class="display"><?= $event['name'] ?></h2>
     <p>
       <?= nl2br($event['description']) ?>
     </p>
