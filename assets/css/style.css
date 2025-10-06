@@ -29,3 +29,20 @@ h2 {
     font-family: 'Radley', serif;
 }
 
+.deux-colonnes {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-column-gap: 10px;
+    grid-row-gap: 0px;
+}
+
+@media (min-width: 768px) {
+    .deux-colonnes {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: 1fr;
+        grid-column-gap: 10px;
+        grid-row-gap: 0px;
+    }
+}

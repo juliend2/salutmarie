@@ -4,27 +4,68 @@ $pdo = new PDO("sqlite:" . __DIR__ . "/../data/data.sqlite3");
 
 
 include __DIR__ . '/../includes/header.php';
+
+function getEventByID($pdo, $id) {
+  $sql = <<<SQL
+    SELECT
+            e.id, e.name, e.description
+    FROM    events AS e
+    WHERE   e.id = :id
+    LIMIT   1
+  SQL;
+  $stmt = $pdo->prepare($sql);
+
+  // Bind the value safely
+  $stmt->execute([':id' => $id]);
+
+  // Fetch a single row
+  return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+function getRequestsByEventID($pdo, $id) {
+  $sql = <<<SQL
+    SELECT
+            request
+    FROM    marys_requests AS mr
+    WHERE   mr.event_id = :id
+  SQL;
+  $stmt = $pdo->prepare($sql);
+
+  // Bind the value safely
+  $stmt->execute([':id' => $id]);
+
+  // Fetch a single row
+  return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 ?>
 
 <?php if (isset($_GET['id'])): ?>
 
-
   <?php
-  $sql = "SELECT id, name, description FROM events WHERE id = :id";
-  $stmt = $pdo->prepare($sql);
 
-  // Bind the value safely
-  $stmt->execute([':id' => 1]);
-
-  // Fetch a single row
-  $event = $stmt->fetch(PDO::FETCH_ASSOC);
+  $event = getEventByID($pdo, $_GET['id']);
+  $requests = getRequestsByEventID($pdo, $_GET['id']);
 
   if ($event) {
     ?>
-    <h2 class="display"><?= $event['name'] ?></h2>
-    <p>
-      <?= nl2br($event['description']) ?>
-    </p>
+    <div class="deux-colonnes">
+      <div class="colonne-principale">
+        <h2 class="display"><?= $event['name'] ?></h2>
+        <p>
+          <?= nl2br($event['description']) ?>
+        </p>
+      </div>
+      <div class="barre-laterale">
+        <ul>
+          <?php foreach ($requests as $r): ?>
+          <li>
+            <?= htmlspecialchars($r['request']) ?>
+          </li>
+          <?php endforeach ?>
+        </ul>
+      </div>
+    </div>
     <?php
   } else {
       echo "Mauvaise adresse, désolé.";
