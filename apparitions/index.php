@@ -4,39 +4,7 @@ $pdo = new PDO("sqlite:" . __DIR__ . "/../data/data.sqlite3");
 
 
 include __DIR__ . '/../includes/header.php';
-
-function getEventByID($pdo, $id) {
-  $sql = <<<SQL
-    SELECT
-            e.id, e.name, e.description
-    FROM    events AS e
-    WHERE   e.id = :id
-    LIMIT   1
-  SQL;
-  $stmt = $pdo->prepare($sql);
-
-  // Bind the value safely
-  $stmt->execute([':id' => $id]);
-
-  // Fetch a single row
-  return $stmt->fetch(PDO::FETCH_ASSOC);
-}
-
-function getRequestsByEventID($pdo, $id) {
-  $sql = <<<SQL
-    SELECT
-            request
-    FROM    marys_requests AS mr
-    WHERE   mr.event_id = :id
-  SQL;
-  $stmt = $pdo->prepare($sql);
-
-  // Bind the value safely
-  $stmt->execute([':id' => $id]);
-
-  // Fetch a single row
-  return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+include __DIR__ . '/../lib/repository.php';
 
 ?>
 
@@ -53,7 +21,7 @@ function getRequestsByEventID($pdo, $id) {
       <div class="colonne-principale">
         <h2 class="display"><?= $event['name'] ?></h2>
         <p>
-          <?= nl2br($event['description']) ?>
+          <?= nl2br(htmlspecialchars($event['description'])) ?>
         </p>
       </div>
       <div class="barre-laterale">
